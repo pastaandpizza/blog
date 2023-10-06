@@ -5,6 +5,7 @@ import Layout from "../components/layout";
 import { getAllRecipes } from "../lib/api";
 import Head from "next/head";
 import Post from "../interfaces/post";
+import { fetchRecipes } from "../lib/fetchRecipes";
 
 type Props = {
   allRecipes: Post[];
@@ -37,14 +38,11 @@ export default function Index({ allRecipes }: Props) {
 }
 
 export const getStaticProps = async () => {
-  const allRecipes = getAllRecipes([
-    "title",
-    "date",
-    "slug",
-    "author",
-    "coverImage",
-    "excerpt",
-  ]);
+  const recipes = await fetchRecipes();
+  const allRecipes = getAllRecipes(
+    ["title", "date", "slug", "author", "coverImage", "excerpt"],
+    recipes
+  );
 
   return {
     props: { allRecipes },

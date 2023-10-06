@@ -10,6 +10,7 @@ import PostTitle from "../../components/post-title";
 import Head from "next/head";
 import markdownToHtml from "../../lib/markdownToHtml";
 import type PostType from "../../interfaces/post";
+import { fetchRecipes } from "../../lib/fetchRecipes";
 
 type Props = {
   post: PostType;
@@ -17,7 +18,7 @@ type Props = {
   preview?: boolean;
 };
 
-export default function Post({ post, moreRecipes, preview }: Props) {
+export default function Recipe({ post, moreRecipes, preview }: Props) {
   const router = useRouter();
   const title = `${post.title} | Pasta and Pizza`;
   if (!router.isFallback && !post?.slug) {
@@ -56,14 +57,14 @@ type Params = {
 };
 
 export async function getStaticProps({ params }: Params) {
-  const post = getPostBySlug(params.slug, [
-    "title",
-    "date",
-    "slug",
-    "author",
-    "content",
-    "coverImage",
-  ]);
+  const recipes = await fetchRecipes();
+
+  const post = getPostBySlug(
+    params.slug,
+    ["title", "date", "slug", "author", "content", "coverImage"],
+    recipes[params.slug]
+  );
+
   const content = await markdownToHtml(post.content || "");
 
   return {
@@ -77,13 +78,13 @@ export async function getStaticProps({ params }: Params) {
 }
 
 export async function getStaticPaths() {
-  const recipes = getAllRecipes(["slug"]);
+  const recipes = await fetchRecipes();
 
   return {
-    paths: recipes.map((post) => {
+    paths: Object.keys(recipes).map((slug) => {
       return {
         params: {
-          slug: post.slug,
+          slug: slug,
         },
       };
     }),

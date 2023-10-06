@@ -1,18 +1,11 @@
-import fs from "fs";
-import { join } from "path";
 import matter from "gray-matter";
 
-const recipesDirectory = join(process.cwd(), "_recipes");
-
-export function getPostSlugs() {
-  return fs.readdirSync(recipesDirectory);
-}
-
-export function getPostBySlug(slug: string, fields: string[] = []) {
-  const realSlug = slug.replace(/\.md$/, "");
-  const fullPath = join(recipesDirectory, `${realSlug}.md`);
-  const fileContents = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(fileContents);
+export function getPostBySlug(
+  slug: string,
+  fields: string[] = [],
+  postContent: any
+) {
+  const { data, content } = matter(postContent);
 
   type Items = {
     [key: string]: string;
@@ -23,7 +16,7 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   // Ensure only the minimal needed data is exposed
   fields.forEach((field) => {
     if (field === "slug") {
-      items[field] = realSlug;
+      items[field] = slug;
     }
     if (field === "content") {
       items[field] = content;
@@ -37,11 +30,11 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   return items;
 }
 
-export function getAllRecipes(fields: string[] = []) {
-  const slugs = getPostSlugs();
-  const recipes = slugs
-    .map((slug) => getPostBySlug(slug, fields))
-    // sort recipes by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
-  return recipes;
+export function getAllRecipes(fields: string[] = [], recipes: any) {
+  return (
+    Object.keys(recipes)
+      .map((slug) => getPostBySlug(slug, fields, recipes[slug]))
+      // sort recipes by date in descending order
+      .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
+  );
 }
