@@ -5,7 +5,7 @@ import PostBody from "../../components/post-body";
 import Header from "../../components/header";
 import PostHeader from "../../components/post-header";
 import Layout from "../../components/layout";
-import { getPostBySlug, getAllPosts } from "../../lib/api";
+import { getPostBySlug, getAllRecipes } from "../../lib/api";
 import PostTitle from "../../components/post-title";
 import Head from "next/head";
 import markdownToHtml from "../../lib/markdownToHtml";
@@ -13,11 +13,11 @@ import type PostType from "../../interfaces/post";
 
 type Props = {
   post: PostType;
-  morePosts: PostType[];
+  moreRecipes: PostType[];
   preview?: boolean;
 };
 
-export default function Post({ post, morePosts, preview }: Props) {
+export default function Post({ post, moreRecipes, preview }: Props) {
   const router = useRouter();
   const title = `${post.title} | Pasta and Pizza`;
   if (!router.isFallback && !post?.slug) {
@@ -77,10 +77,10 @@ export async function getStaticProps({ params }: Params) {
 }
 
 export async function getStaticPaths() {
-  const posts = getAllPosts(["slug"]);
+  const recipes = getAllRecipes(["slug"]);
 
   return {
-    paths: posts.map((post) => {
+    paths: recipes.map((post) => {
       return {
         params: {
           slug: post.slug,

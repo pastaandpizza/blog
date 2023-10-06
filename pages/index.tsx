@@ -2,17 +2,17 @@ import Container from "../components/container";
 import MoreStories from "../components/more-stories";
 import HeroPost from "../components/hero-post";
 import Layout from "../components/layout";
-import { getAllPosts } from "../lib/api";
+import { getAllRecipes } from "../lib/api";
 import Head from "next/head";
 import Post from "../interfaces/post";
 
 type Props = {
-  allPosts: Post[];
+  allRecipes: Post[];
 };
 
-export default function Index({ allPosts }: Props) {
-  const heroPost = allPosts[0];
-  const morePosts = allPosts.slice(1);
+export default function Index({ allRecipes }: Props) {
+  const heroPost = allRecipes[0];
+  const moreRecipes = allRecipes.slice(1);
   return (
     <>
       <Layout>
@@ -29,7 +29,7 @@ export default function Index({ allPosts }: Props) {
               excerpt={heroPost.excerpt}
             />
           )}
-          {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+          {moreRecipes.length > 0 && <MoreStories recipes={moreRecipes} />}
         </Container>
       </Layout>
     </>
@@ -37,7 +37,7 @@ export default function Index({ allPosts }: Props) {
 }
 
 export const getStaticProps = async () => {
-  const allPosts = getAllPosts([
+  const allRecipes = getAllRecipes([
     "title",
     "date",
     "slug",
@@ -47,6 +47,6 @@ export const getStaticProps = async () => {
   ]);
 
   return {
-    props: { allPosts },
+    props: { allRecipes },
   };
 };

@@ -37,11 +37,11 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   return items;
 }
 
-export function getAllPosts(fields: string[] = []) {
+export function getAllRecipes(fields: string[] = []) {
   const slugs = getPostSlugs();
-  const posts = slugs
+  const recipes = slugs
     .map((slug) => getPostBySlug(slug, fields))
-    // sort posts by date in descending order
+    // sort recipes by date in descending order
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
-  return posts;
+  return recipes;
 }
